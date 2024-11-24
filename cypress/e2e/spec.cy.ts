@@ -1,12 +1,14 @@
+import Schema1Page from "../support/page-objects/schema1-page";
+
+
 describe("template spec", () => {
-  before(()=>{
-  }) 
+  const schema1Page = new Schema1Page();
+
   beforeEach(()=>{
-    cy.visit("http://localhost:3000/");
+    cy.visit("/");
   })
-  it("Required fields", () => {
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[2]/button').as('submitButton');
-    cy.get('@submitButton').click();
+  it.only("Required fields", () => {
+    cy.xpath(schema1Page.submitButton).click();
 
     cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[1]/input').as('username-input');
     cy.get('@username-input').next().should('have.text', 'This field is required');
@@ -72,8 +74,5 @@ describe("template spec", () => {
         expect(jsonData.address.zipcode).to.equal(`${value}`);
       })
     })
-
-
-
   });
 });
