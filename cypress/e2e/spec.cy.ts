@@ -7,7 +7,7 @@ describe("template spec", () => {
   beforeEach(()=>{
     cy.visit("/");
   })
-  it.only("Required fields", () => {
+  it("Required fields", () => {
     cy.xpath(schema1Page.submitButton).click();
 
     cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[1]/input').as('username-input');
