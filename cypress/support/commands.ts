@@ -46,12 +46,12 @@ Cypress.Commands.add('completeSchema1', (username, age, email, bio, street, city
     cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[3]/input').as('email-input').type(email);
 
     cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[4]/textarea').as('bio-input').type(bio);
-    
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[5]/input').check();
 
     cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[6]/div/div[1]/input').as('street-input').type(street);
     
     cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[6]/div/div[2]/input').as('city-input').type(city);
     
     cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[6]/div/div[3]/input').as('zipcode-input').type(zipcode);
+
+    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[2]/button').as('submitButton').click();
  })

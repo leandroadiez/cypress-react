@@ -1,6 +1,5 @@
 describe("template spec", () => {
   before(()=>{
-    const dataSchema1 = cy.fixture('schema1.json')
   }) 
   beforeEach(()=>{
     cy.visit("http://localhost:3000/");
@@ -44,27 +43,37 @@ describe("template spec", () => {
   })
 
   it("Output check", () => {
-    cy.completeSchema1("Leandro", "29", "leandro@test.com", "Lorem ipsum", "Fake Street 123", "Buenos Aires", "444", "Male");
-    cy.get('@username-input').invoke('val').then((value)=>{
-      cy.contains((`"username": "${value}"`)).should('exist')
+    //complete schema1 via custom command
+    cy.completeSchema1("Leandro", "29", "leandro@test.com", "Lorem ipsum", "Fake Street 123", "Buenos Aires", "444", "Male"); 
+
+    //compare form values with output
+    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/pre[1]/text()[2]').invoke('text').then((text)=>{
+      const jsonData = JSON.parse(text);
+
+      cy.get('@username-input').invoke('val').then((value)=>{
+        expect(jsonData.username).to.equal(`${value}`);
+      })
+      cy.get('@age-input').invoke('val').then((value)=>{
+        expect(jsonData.age).to.equal(`${value}`);
+      })
+      cy.get('@email-input').invoke('val').then((value)=>{
+        expect(jsonData.email).to.equal(`${value}`);
+      })
+      cy.get('@bio-input').invoke('val').then((value)=>{
+        expect(jsonData.bio).to.equal(`${value}`);
+      })
+      cy.get('@street-input').invoke('val').then((value)=>{
+        expect(jsonData.address.street).to.equal(`${value}`);
+      })
+      cy.get('@city-input').invoke('val').then((value)=>{
+        expect(jsonData.address.city).to.equal(`${value}`);
+      })
+      cy.get('@zipcode-input').invoke('val').then((value)=>{
+        expect(jsonData.address.zipcode).to.equal(`${value}`);
+      })
     })
-    cy.get('@age-input').invoke('val').then((value)=>{
-      cy.contains((`"age": "${value}"`)).should('exist')
-    })
-    cy.get('@email-input').invoke('val').then((value)=>{
-      cy.contains((`"email": "${value}"`)).should('exist')
-    })
-    cy.get('@bio-input').invoke('val').then((value)=>{
-      cy.contains((`"bio": "${value}"`)).should('exist')
-    })
-    cy.get('@street-input').invoke('val').then((value)=>{
-      cy.contains((`"street": "${value}"`)).should('exist')
-    })
-    cy.get('@city-input').invoke('val').then((value)=>{
-      cy.contains((`"city": "${value}"`)).should('exist')
-    })
-    cy.get('@zipcode-input').invoke('val').then((value)=>{
-      cy.contains((`"zipcode": "${value}"`)).should('exist')
-    })
+
+
+
   });
 });
