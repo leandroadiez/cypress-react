@@ -1,5 +1,5 @@
+import { errorMessages } from "../support/error-messages";
 import Schema1Page from "../support/page-objects/schema1-page";
-
 
 describe("template spec", () => {
   const schema1Page = new Schema1Page();
@@ -8,40 +8,24 @@ describe("template spec", () => {
     cy.visit("/");
   })
   it("Required fields", () => {
-    cy.xpath(schema1Page.submitButton).click();
-
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[1]/input').as('username-input');
-    cy.get('@username-input').next().should('have.text', 'This field is required');
-
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[2]/input').as('age-input');
-    cy.get('@age-input').next().should('have.text', 'This field is required');
+    let requiredFields = ['username', 'age', 'email', 'street', 'city', 'zipcode', 'gender'];
+    cy.contains(schema1Page.submitButton).click();
     
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[3]/input').as('email-input');
-    cy.get('@email-input').next().should('have.text', 'This field is required');
-    
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[6]/div/div[1]/input').as('street-input');
-    cy.get('@street-input').next().should('have.text', 'This field is required');
-    
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[6]/div/div[2]/input').as('city-input');
-    cy.get('@city-input').next().should('have.text', 'This field is required');
-    
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[6]/div/div[3]/input').as('zipcode-input');
-    cy.get('@zipcode-input').next().should('have.text', 'This field is required');
-    
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[7]/button').as('gender-input');
-    cy.get('@gender-input').next().next().should('have.text', 'This field is required');
+    requiredFields.forEach((field)=>{
+      cy.contains(field).nextAll('p').first().should('have.text', errorMessages.requiredField);
+    })
   });
 
   it("Minium Length", () => {
     cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[1]/input').as('username-input').type('L');
     cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[2]/button').as('submitButton').click();
-    cy.get('@username-input').next().should('have.text', 'Minimum length is 5');
+    cy.get('@username-input').next().should('have.text', errorMessages.minimumLength(5));
   })
 
   it("Maximum Length", () => {
     cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[1]/input').as('username-input').type('Lorem Ipsum is simply dummy text');
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[2]/button').as('submitButton').click();
-    cy.get('@username-input').next().should('have.text', 'Maximum length is 20');
+    cy.contains(schema1Page.submitButton).click();
+    cy.contains('username').nextAll('p').first().should('have.text', errorMessages.maximumLength(20));
   })
 
   it("Output check", () => {
