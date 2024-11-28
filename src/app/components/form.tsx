@@ -238,12 +238,12 @@ export const DynamicForm = ({ schema }: DynamicFormProps) => {
           )}
         </CardContent>
         <CardFooter>
-          <Button type="button" onClick={handleSubmit}>
+          <Button data-test-id={`button-${Date.now()}`} type="button" onClick={handleSubmit}>
             Submit
           </Button>
         </CardFooter>
       </Card>
-      <pre className="mt-4 bg-gray-100 p-4 overflow-auto">
+      <pre data-test="values-json" className="mt-4 bg-gray-100 p-4 overflow-auto">
         Values: <br />
         {JSON.stringify(formData, null, 2)}
       </pre>

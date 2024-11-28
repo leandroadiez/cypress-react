@@ -1,5 +1,30 @@
 {
-  "name": "Using fixtures to represent data",
-  "email": "hello@cypress.io",
-  "body": "Fixtures are a great way to mock data for responses to routes"
+  "Schema A": {
+    "fields": [
+      { "name": "username", "value": "John Doe", "type": "input", "required": true},
+      { "name": "age", "value": "12345", "type": "input"  },
+      { "name": "email", "value": "john@example.com", "type": "input"  },
+      { "name": "bio", "value": "This is my bio", "type": "textarea"  },
+      { "name": "street", "value": "John Doe", "type": "input"  },
+      { "name": "city", "value": "john@example.com", "type": "input"  },
+      { "name": "zipcode", "value": "12345", "type": "input"  }
+    ]
+  },
+  "Schema B": {
+    "fields": [
+      { "name": "account_name", "value": "Pepito Lopez", "type": "input", "required": true },
+      { "name": "storage_limit", "value": "12345", "type": "input"  },
+      { "name": "contact_email", "value": "This is my bio", "type": "input"  }
+    ]
+  },
+  "Schema C": {
+    "fields": [
+      { "name": "username", "value": "JoASDDASADShn Doe" },
+      { "name": "age", "value": "12345" },
+      { "name": "email", "value": "john@example.com" },
+      { "name": "street", "value": "John Doe" },
+      { "name": "city", "value": "john@example.com" },
+      { "name": "zipcode", "value": "12345" }
+    ]
+  }
 }

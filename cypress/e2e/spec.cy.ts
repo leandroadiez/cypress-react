@@ -1,62 +1,88 @@
 import { errorMessages } from "../support/error-messages";
-import Schema1Page from "../support/page-objects/schema1-page";
 
 describe("template spec", () => {
-  const schema1Page = new Schema1Page();
+  const requiredFields = ['username', 'age', 'email', 'street', 'city', 'zipcode'];
 
   beforeEach(()=>{
     cy.visit("/");
   })
+
   it("Required fields", () => {
-    let requiredFields = ['username', 'age', 'email', 'street', 'city', 'zipcode', 'gender'];
-    cy.contains(schema1Page.submitButton).click();
+    cy.contains('Submit').click();
     
     requiredFields.forEach((field)=>{
       cy.contains(field).nextAll('p').first().should('have.text', errorMessages.requiredField);
     })
   });
 
-  it("Minium Length", () => {
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[1]/input').as('username-input').type('L');
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[2]/button').as('submitButton').click();
-    cy.get('@username-input').next().should('have.text', errorMessages.minimumLength(5));
+  it("Minimum Length", () => {
+    cy.contains('username').next().type('L');
+    cy.contains('Submit').click();
+    cy.contains('username').nextAll('p').first().should('have.text', errorMessages.minimumLength(5));
   })
 
   it("Maximum Length", () => {
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/div/div[1]/div[1]/input').as('username-input').type('Lorem Ipsum is simply dummy text');
-    cy.contains(schema1Page.submitButton).click();
+    cy.contains('username').next().type('Lorem Ipsum is simply dummy text');
+    cy.contains('Submit').click();
     cy.contains('username').nextAll('p').first().should('have.text', errorMessages.maximumLength(20));
   })
 
   it("Output check", () => {
-    //complete schema1 via custom command
-    cy.completeSchema1("Leandro", "29", "leandro@test.com", "Lorem ipsum", "Fake Street 123", "Buenos Aires", "444", "Male"); 
+    const forms = ['Schema A', 'Schema B', 'Schema C']
+    forms.forEach((form)=>{
+      cy.log(`ITERACION ${form}`);
+      cy.fillForm(form);
 
-    //compare form values with output
-    cy.xpath('//*[@id="radix-:r1:-content-A"]/form/pre[1]/text()[2]').invoke('text').then((text)=>{
-      const jsonData = JSON.parse(text);
+      cy.get('pre').first().invoke('text').then((text)=>{
+        text = text.slice(7);
+        const jsonData = JSON.parse(text);
+        cy.fixture('example.json').then((formsData)=>{
+          formsData[form].fields.forEach((field)=>{
+            cy.contains(field.name).next().invoke('val').then((value)=>{
+              switch(field.name){
+                case "street":
+                case "city":
+                case "zipcode":
+                  expect(jsonData.address[field.name]).to.equal(`${value}`);
+                  break;
+                default:  
+                  expect(jsonData[field.name]).to.equal(`${value}`);
+              }
+            })
+          })
+        })
+      })
+        
 
-      cy.get('@username-input').invoke('val').then((value)=>{
-        expect(jsonData.username).to.equal(`${value}`);
-      })
-      cy.get('@age-input').invoke('val').then((value)=>{
-        expect(jsonData.age).to.equal(`${value}`);
-      })
-      cy.get('@email-input').invoke('val').then((value)=>{
-        expect(jsonData.email).to.equal(`${value}`);
-      })
-      cy.get('@bio-input').invoke('val').then((value)=>{
-        expect(jsonData.bio).to.equal(`${value}`);
-      })
-      cy.get('@street-input').invoke('val').then((value)=>{
-        expect(jsonData.address.street).to.equal(`${value}`);
-      })
-      cy.get('@city-input').invoke('val').then((value)=>{
-        expect(jsonData.address.city).to.equal(`${value}`);
-      })
-      cy.get('@zipcode-input').invoke('val').then((value)=>{
-        expect(jsonData.address.zipcode).to.equal(`${value}`);
-      })
-    })
+
+
+
+
+
+
+
+
+
+
+// "Schema B": {
+//     "fields": [
+//       { "name": "account_name", "value": "Pepito Lopez", "type": "input", "required": true },
+//       { "name": "storage_limit", "value": "12345", "type": "input"  },
+//       { "name": "is_active", "value": true, "type": "checkbox"  },
+//       { "name": "contact_email", "value": "This is my bio", "type": "input"  },
+//       { "name": "backup_enabled", "value": true, "type": "checkbox"  },
+//       { "name": "email_notifications", "value": true, "type": "checkbox"  },
+//       { "name": "sms_notifications", "value": true, "type": "checkbox"  },
+//       { "name": "push_notifications", "value": true, "type": "checkbox"  },
+//       { "name": "account_type", "value": "enterprise", "type": "select"  },
+//       { "name": "subscription_status", "value": true, "type": "checkbox"  }
+//     ]
+//   }
+
+
+
+    })    
   });
 });
+
+
